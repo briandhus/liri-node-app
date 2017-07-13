@@ -36,7 +36,8 @@ function spotifyPlay() {
 	var params = '';
 
 	if (process.argv[3] === undefined) {
- 		params = "the sign";
+ 		params = "The Sign";
+ 		
  	} else {
  		var params = process.argv.slice(3).join(" ");
  		console.log(params);
@@ -48,13 +49,15 @@ function spotifyPlay() {
 
 
  	
-	spotify.search({ type: 'track', query: params, limit: 3 }, function(err, data) {
+	spotify.search({ type: 'track', query: params, limit: 7 }, function(err, data) {
     if ( err ) {
         console.log('Error occurred: ' + err);
         return;  
     }
     else{
     var songInfo = data.tracks.items;
+
+
     
     for (var i = 0; i < songInfo.length; i++) {
     	for (var j = 0; j < songInfo[i].artists.length; j++) {
@@ -75,6 +78,7 @@ function spotifyPlay() {
     	console.log("")
     }
     } 
+    console.log(data.tracks.items[6].artists[0].name);
   	});
 
 };
@@ -103,7 +107,7 @@ function movieInfo() {
 			console.log(JSON.parse(body).imdbRating);
 			console.log('');
 			console.log('----------------');
-			console.log(JSON.parse(body).Ratings[0].Value);
+			console.log(JSON.parse(body).Ratings[1].Value);
 			console.log('');
 			console.log('----------------');
 			console.log(JSON.parse(body).Country);
@@ -161,5 +165,6 @@ switch (userRequest) {
 	default:
 		console.log("Please choose from your options: 'my-tweets', 'spotify-this-song', 'movie-this', 'do-what-it-says'");
 }
+
 
 
