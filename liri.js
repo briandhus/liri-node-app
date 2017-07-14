@@ -2,6 +2,8 @@ var keys = require('./keys.js');
 
 var userRequest = process.argv[2]; 
 
+var userInput = process.argv[3];
+
 var Twitter = require('twitter');
 
 var Spotify = require('node-spotify-api');
@@ -11,7 +13,7 @@ var fs = require('fs');
 var request = require('request');
 
 
-function twittyTwenty() {
+function twittyTwenty(tweet) {
 	var client = new Twitter(keys.twitterKeys);
 	var params = {
 		screen_name: 'jesus'
@@ -19,6 +21,8 @@ function twittyTwenty() {
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 		if (!error && response.statusCode === 200) {
 			for (var i = 0; i < tweets.length; i++) {
+				console.log('----------------');
+				console.log('');
 				console.log(tweets[i].text);
 			} 
 		} 
@@ -26,68 +30,59 @@ function twittyTwenty() {
 	})
 }
 
-function spotifyPlay() {
+function spotifyPlay(songName) {
 
 	var spotify = new Spotify({
     	id: "43d784cfcc0545e398298a658026dc49",
   		secret: "ef4e408c593443a2937a4312f7156cd6"
 	}); 
 
-	var params = '';
 
-	if (process.argv[3] === undefined) {
- 		params = "The Sign";
+	if (songName === undefined) {
+ 		songName = "The Sign";
  		
- 	} else {
- 		var params = process.argv.slice(3).join(" ");
- 		console.log(params);
- 	}
-
- 	// var params = process.argv.slice(3).join(" ");
- 	// console.log(params);
-
-
-
+ 	} 
  	
-	spotify.search({ type: 'track', query: params, limit: 7 }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;  
-    }
-    else{
-    var songInfo = data.tracks.items;
+ 	console.log(songName);
+ 	
+	spotify.search({ type: 'track', query: songName, limit: 7 }, function(err, data) {
+				
+	    if ( err ) {
+	        console.log('Error occurred: ' + err);
+	        return;  
+	    } else {
+		    var songInfo = data.tracks.items;
 
 
-    
-    for (var i = 0; i < songInfo.length; i++) {
-    	for (var j = 0; j < songInfo[i].artists.length; j++) {
-    		console.log("");
-    		console.log("artist: ", JSON.stringify(songInfo[i].artists[j].name, null, 2));
-	    	console.log("")
-	    	console.log("------------------------------")
-    	}
-    	
-    	
-    	console.log("song: ", JSON.stringify(songInfo[i].name, null, 2));
-    	console.log("")
-    	console.log("------------------------------")
-    	console.log("album: ", JSON.stringify(songInfo[i].album.name, null, 2));
-    	console.log("")
-    	console.log("------------------------------")
-    	console.log("preview: ", JSON.stringify(songInfo[i].preview_url, null, 2));
-    	console.log("")
-    }
-    } 
-    console.log(data.tracks.items[6].artists[0].name);
+		    
+		    for (var i = 0; i < songInfo.length; i++) {
+		    	for (var j = 0; j < songInfo[i].artists.length; j++) {
+		    		console.log("");
+		    		console.log("artist: ", JSON.stringify(songInfo[i].artists[j].name, null, 2));
+			    	console.log("")
+			    	console.log("------------------------------")
+		    	}
+		    	
+		    	
+		    	console.log("song: ", JSON.stringify(songInfo[i].name, null, 2));
+		    	console.log("")
+		    	console.log("------------------------------")
+		    	console.log("album: ", JSON.stringify(songInfo[i].album.name, null, 2));
+		    	console.log("")
+		    	console.log("------------------------------")
+		    	console.log("preview: ", JSON.stringify(songInfo[i].preview_url, null, 2));
+		    	console.log("")
+		    }
+	    } 
+	    
   	});
 
 };
 
-function movieInfo() {
+function movieInfo(movieName) {
 
-	var movieName = '';
 
-	if (process.argv[3] === undefined) {
+	if (movieName === undefined) {
 		movieName = "Mr Nobody";
 	} else {
 		movieName = process.argv.slice(3).join(" ");
@@ -135,35 +130,51 @@ function doinIt() {
 			return console.log(error);
 		}
 
-		console.log(data);
-
 		var dataArr = data.split(",");
 
-		// console.log(dataArr);
-	})
-}
- 
+		
+		console.log("command: ", dataArr[0]);
+		
+		var command = dataArr[0];
+		var value = dataArr[1];
+		
+		switch (command) {
+			case "spotify-this-song":
+				spotifyPlay(value);
+				break;
+			case "movie-this":
+				movieInfo(value);
+				break;
+			case "my-tweets":
+				twittyTwenty(value);
+				break;
+		};
 
+	});
+};
+ 
 switch (userRequest) {
 
 	case "my-tweets":
-		twittyTwenty();
+		twittyTwenty(userInput);
 		break;
 
 	case "spotify-this-song":
-		spotifyPlay();
+		spotifyPlay(userInput);
 		break;
 
 	case "movie-this":
-		movieInfo();
+		movieInfo(userInput);
 		break;
 
 	case "do-what-it-says":
-		doinIt();
+		doinIt(userInput);
 		break;
 
 	default:
+		console.log('');
 		console.log("Please choose from your options: 'my-tweets', 'spotify-this-song', 'movie-this', 'do-what-it-says'");
+		console.log('');
 }
 
 
