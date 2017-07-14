@@ -28,6 +28,11 @@ function twittyTwenty(tweet) {
 		} 
 
 	})
+	fs.appendFile("log.txt", "\n" + params.screen_name, function(err) {
+		if (err) {
+  			return console.log(err);
+    	}
+  	});
 }
 
 function spotifyPlay(songName) {
@@ -39,13 +44,13 @@ function spotifyPlay(songName) {
 
 
 	if (songName === undefined) {
- 		songName = "The Sign";
+ 		songName = "Many Rivers To Cross";
  		
  	} 
  	
  	console.log(songName);
  	
-	spotify.search({ type: 'track', query: songName, limit: 7 }, function(err, data) {
+	spotify.search({ type: 'track', query: songName, limit: 3 }, function(err, data) {
 				
 	    if ( err ) {
 	        console.log('Error occurred: ' + err);
@@ -53,7 +58,11 @@ function spotifyPlay(songName) {
 	    } else {
 		    var songInfo = data.tracks.items;
 
-
+		    fs.appendFile("log.txt", "\n" + songName, function(err) {
+	    		if (err) {
+	      			return console.log(err);
+		    	}
+		  	});
 		    
 		    for (var i = 0; i < songInfo.length; i++) {
 		    	for (var j = 0; j < songInfo[i].artists.length; j++) {
@@ -120,6 +129,12 @@ function movieInfo(movieName) {
 		} else if (error) {
 			console.log(error);
 		}
+
+		fs.appendFile("log.txt", "\n" + movieName, function(err) {
+    		if (err) {
+      			return console.log(err);
+	    	}
+	  	});
 	});
 }
 
